@@ -7,7 +7,7 @@ import shutil
 import configparser
 import subprocess
 import signal
-
+import platform
 from urllib.request import urlretrieve
 import requests
 from tqdm import tqdm
@@ -52,7 +52,7 @@ CONFIG = load_config()
 
 TEMP_DIR = os.path.join(CONFIG_DIR, 'downloads')
 
-NEO4J_VERSION = '4.3.3'
+NEO4J_VERSION = '5.14.0'
 
 INFLUXDB_VERSION = '1.8.9'
 
@@ -203,7 +203,7 @@ def start():
     if sys.platform.startswith('win'):
         influxdb_bin = os.path.join(CONFIG['Data']['directory'], 'influxdb', 'influxd.exe')
     elif sys.platform == 'darwin':
-        if sys.platform.machine() == 'arm64':
+        if platform.machine() == 'arm64':
             influxdb_bin = '/opt/homebrew/opt/influxdb@1/bin/influxd'
         else:
             influxdb_bin = '/usr/local/opt/influxdb@1/bin/influxd'

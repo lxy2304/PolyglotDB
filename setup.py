@@ -90,7 +90,7 @@ if __name__ == '__main__':
           package_data={'polyglotdb.databases': ['*.conf'],
                         'polyglotdb.acoustics.formants': ['*.praat']},
           install_requires=[
-              'neo4j-driver~=4.3',
+              'neo4j-driver~=5.14',
               'praatio~=5.0',
               'textgrid',
               'conch_sounds',

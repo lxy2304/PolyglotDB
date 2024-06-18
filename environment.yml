@@ -3,15 +3,15 @@ channels:
     - conda-forge
 dependencies:
     - librosa
-    - scipy
+    - scipy = 1.11.0
     - praatio ~= 5.0
     - textgrid
     - influxdb
     - tqdm
     - future
     - requests
-    - openjdk=11
+    - openjdk=21
     - pip
     - pip:
         - conch_sounds
-        - neo4j-driver ~= 4.3
+        - neo4j-driver ~= 5.14
