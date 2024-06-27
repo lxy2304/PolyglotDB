@@ -52,7 +52,7 @@ CONFIG = load_config()
 
 TEMP_DIR = os.path.join(CONFIG_DIR, 'downloads')
 
-NEO4J_VERSION = '5.20.0'
+NEO4J_VERSION = '5.14.0'
 
 INFLUXDB_VERSION = '1.8.9'
 
@@ -132,10 +132,20 @@ def download_influxdb(data_directory, overwrite=False):
     else:
         print('Installing InfluxDB...')
         subprocess.call(['brew', 'update'])
-        subprocess.call(['brew', 'install', 'influxdb@1'])
+        if ((is_running_under_rosetta() and platform.machine() == 'x86_64') or platform.machine() == 'arm64'):
+            subprocess.call(['arch', '-arm64', 'brew', 'install', 'influxdb@1'])
+        else:
+            subprocess.call(['brew', 'install', 'influxdb@1'])
     return True
 
-
+def is_running_under_rosetta():
+    try:
+        result = subprocess.run(['sysctl', '-n', 'sysctl.proc_translated'], capture_output=True, text=True)
+        return result.stdout.strip() == '1'
+    except Exception as e:
+        print(f"An error occurred while checking Rosetta status: {e}")
+        return False
+    
 def configure_neo4j(data_directory):
     from polyglotdb.databases.config import neo4j_template_path
     neo4j_conf_path = os.path.join(data_directory, 'neo4j', 'conf', 'neo4j.conf')
@@ -203,7 +213,7 @@ def start():
     if sys.platform.startswith('win'):
         influxdb_bin = os.path.join(CONFIG['Data']['directory'], 'influxdb', 'influxd.exe')
     elif sys.platform == 'darwin':
-        if platform.machine() == 'arm64':
+        if platform.machine() == 'arm64' or ((is_running_under_rosetta() and platform.machine() == 'x86_64') ):
             influxdb_bin = '/opt/homebrew/opt/influxdb@1/bin/influxd'
         else:
             influxdb_bin = '/usr/local/opt/influxdb@1/bin/influxd'
@@ -245,7 +255,8 @@ def status(name):
     pass
 
 
-if __name__ == '__main__':
+def main():
+    global CONFIG_CHANGED
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(help='Command to use')
     install_parser = subparsers.add_parser("install")
@@ -314,3 +325,6 @@ if __name__ == '__main__':
 
     if CONFIG_CHANGED:
         save_config(CONFIG)
+
+if __name__ == '__main__':
+    main()

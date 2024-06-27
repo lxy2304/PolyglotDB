@@ -1,9 +1,9 @@
-name: polyglotdb-dev
+name: polyglotdb-dev-2
 channels:
     - conda-forge
 dependencies:
     - librosa
-    - scipy ~= 1.11.0
+    - scipy ~= 1.12.0
     - praatio ~= 5.0
     - textgrid
     - influxdb
