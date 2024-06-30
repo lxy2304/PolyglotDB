@@ -18,7 +18,7 @@ DEFAULT_DATA_DIR = os.path.join(CONFIG_DIR, 'data')
 
 CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.ini')
 
-CONFIG_CHANGED = True
+CONFIG_CHANGED = False
 
 
 def load_config():
@@ -52,7 +52,7 @@ CONFIG = load_config()
 
 TEMP_DIR = os.path.join(CONFIG_DIR, 'downloads')
 
-NEO4J_VERSION = '5.14.0'
+NEO4J_VERSION = '5.21.0'
 
 INFLUXDB_VERSION = '1.8.9'
 
@@ -98,7 +98,7 @@ def download_neo4j(data_directory, overwrite=False):
         import win32com.shell.shell as shell
         exe = 'neo4j.bat'
         neo4j_bin = os.path.join(CONFIG['Data']['directory'], 'neo4j', 'bin', exe)
-        params = 'install-service'
+        params = 'windows-service install'
         shell.ShellExecuteEx(lpVerb='runas', lpFile=neo4j_bin, lpParameters=params)
     return True
 
@@ -187,11 +187,12 @@ def uninstall():
         import win32com.shell.shell as shell
         exe = 'neo4j.bat'
         neo4j_bin = os.path.join(CONFIG['Data']['directory'], 'neo4j', 'bin', exe)
-        params = 'uninstall-service asadmin'
+        params = 'windows-service uninstall'
         shell.ShellExecuteEx(lpVerb='runas', lpFile=neo4j_bin, lpParameters=params)
 
     try:
         shutil.rmtree(directory)
+        shutil.rmtree(CONFIG_DIR)
     except FileNotFoundError:
         pass
 

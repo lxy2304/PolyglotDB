@@ -1,4 +1,4 @@
-neo4j ~= 5.14.0
+neo4j
 librosa
 scipy ~= 1.12.0
 praatio ~= 5.0
