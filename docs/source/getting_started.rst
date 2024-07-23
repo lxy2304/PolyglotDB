@@ -27,12 +27,15 @@ dependencies that must be installed prior to using a Polyglot database, dependin
 Installation
 ============
 
-It is recommended to create an insolated conda environment for using PolyglotDB, for ensuring the correct java version as well as better package management with Python. 
+It is recommended to create an insolated conda environment for using PolyglotDB, for ensuring the correct Java version as well as better package management with Python. 
 
 If you don't have conda installed on your device: 
 
-#. Install either Anaconda, miniconda, or miniforge (`Conda Installation`_)
+#. Install either Anaconda, Miniconda, or Miniforge (`Conda Installation`_)
 #. Make sure your conda is up to date :code:`conda update conda`
+
+.. note::
+   On Windows, you should use Anaconda Prompt or Miniforge Prompt in order to use conda.
 
 To install via pip:
 
@@ -64,8 +67,8 @@ See the `ISCAN server`_ for a more fully featured solution.
 
 Mac & Linux
 ```````````
-#. Make sure you are inside the dedicated conda environment created earlier. If not, activate it via: :code:`conda activate polyglotdb`.
-#. Once PolyglotDB is installed, run :code:`pgdb install /path/to/where/you/want/data/to/be/stored`, or
+#. Make sure you are inside the dedicated conda environment just created. If not, activate it via :code:`conda activate polyglotdb`
+#. Inside your conda environment, run :code:`pgdb install /path/to/where/you/want/data/to/be/stored`, or
    :code:`pgdb install` to save data in the default directory.
 
 .. warning::
@@ -80,9 +83,9 @@ To uninstall, run :code:`pgdb uninstall`
 Windows
 ```````
 
-#. Make sure you are running as an Administrator (right-click on Anaconda Prompt and select "Run as administrator"), as Neo4j will be installed as a Windows service. You might need to open a new command prompt for this step.
-#. Make sure you are inside the dedicated conda environment created earlier. If not, activate it via: :code:`conda activate polyglotdb`.
-#. Once PolyglotDB is installed, run :code:`pgdb install /path/to/where/you/want/data/to/be/stored`, or
+#. Make sure you are running as an Administrator (right-click on Anaconda Prompt/Miniforge Prompt and select "Run as administrator"), as Neo4j will be installed as a Windows service.
+#. If you had to reopen a command prompt in Step 1, reactivate your conda environment via: :code:`conda activate polyglotdb`.
+#. Inside your conda environment, run :code:`pgdb install /path/to/where/you/want/data/to/be/stored`, or
    :code:`pgdb install` to save data in the default directory.
 
 To start/stop the database, you likewise have to use an administrator command prompt before entering the commands :code:`pgdb start`
