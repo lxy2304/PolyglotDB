@@ -28,7 +28,6 @@ Installation
 ============
 
 It is recommended to create an insolated conda environment for using PolyglotDB, for ensuring the correct java version as well as better package management with Python. 
-Although it's possible to use it without conda, it might cause permission issues later on. 
 
 If you don't have conda installed on your device: 
 
@@ -46,6 +45,7 @@ To install from source (primarily for development):
 
 #. Clone or download the Git repository (https://github.com/MontrealCorpusTools/PolyglotDB).
 #. Navigate to the directory via command line and create the conda environment via :code:`conda env create -f environment.yml`
+#. Activate conda environment :code:`conda activate polyglotdb-dev`
 #. Install PolyglotDB via :code:`pip install -e .`, which will install the ``pgdb`` utility that can be run inside your conda environment
    and manages a local database.
 
@@ -64,8 +64,7 @@ See the `ISCAN server`_ for a more fully featured solution.
 
 Mac & Linux
 ```````````
-
-#. Check Java version is >= 17 via ``java --version``
+#. Make sure you are inside the dedicated conda environment created earlier. If not, activate it via: :code:`conda activate polyglotdb`.
 #. Once PolyglotDB is installed, run :code:`pgdb install /path/to/where/you/want/data/to/be/stored`, or
    :code:`pgdb install` to save data in the default directory.
 
@@ -81,12 +80,12 @@ To uninstall, run :code:`pgdb uninstall`
 Windows
 ```````
 
-#. Check Java version is >= 17 via ``java --version``
-#. Make sure you are running as an Administrator command prompt (right-click on cmd.exe and select "Run as administrator"), as Neo4j will be installed as a Windows service. You might need to open a new command prompt for this step.
-#. Inside your conda environment, run :code:`pgdb install /path/to/where/you/want/data/to/be/stored`, or
+#. Make sure you are running as an Administrator (right-click on Anaconda Prompt and select "Run as administrator"), as Neo4j will be installed as a Windows service. You might need to open a new command prompt for this step.
+#. Make sure you are inside the dedicated conda environment created earlier. If not, activate it via: :code:`conda activate polyglotdb`.
+#. Once PolyglotDB is installed, run :code:`pgdb install /path/to/where/you/want/data/to/be/stored`, or
    :code:`pgdb install` to save data in the default directory.
 
-To start the database, you likewise have to use an administrator command prompt before entering the commands :code:`pgdb start`
+To start/stop the database, you likewise have to use an administrator command prompt before entering the commands :code:`pgdb start`
 or :code:`pgdb stop`.
 
 To uninstall, run :code:`pgdb uninstall` (also requires an administrator command prompt).
