@@ -14,7 +14,7 @@ if [ ! -d "$HOME/miniconda/miniconda/envs/test-environment" ]; then
   conda create -q -n test-environment -c conda-forge openjdk=21 pip
   conda activate test-environment
   which python
-  pip install -q coveralls coverage neo4j textgrid librosa tqdm influxdb conch_sounds
+  pip install -q coveralls coverage neo4j textgrid librosa tqdm influxdb conch_sounds pytest
   pip install -q -e .
 else
   export PATH="$HOME/miniconda/miniconda/bin:$PATH"
