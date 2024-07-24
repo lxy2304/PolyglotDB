@@ -14,7 +14,6 @@ sudo: required
 addons:
   apt:
     packages:
-      - openjdk-21-jdk
       - sox
       - libsndfile1
 
