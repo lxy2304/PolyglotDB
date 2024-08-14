@@ -34,8 +34,9 @@ If you don't have conda installed on your device:
 #. Install either Anaconda, Miniconda, or Miniforge (`Conda Installation`_)
 #. Make sure your conda is up to date :code:`conda update conda`
 
-.. note::
-   On Windows, you should use Anaconda Prompt or Miniforge Prompt in order to use conda.
+.. warning::
+On Windows, you must use the Anaconda Prompt or Miniforge Prompt to effectively manage and execute conda commands. 
+This is crucial to avoid potential issues specific to the Windows environment and to ensure that all functionalities work as intended.
 
 To install via pip:
 
