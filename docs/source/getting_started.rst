@@ -106,3 +106,117 @@ To return to your root environment:
 .. code-block:: bash
 
     conda deactivate
+
+
+.. _docker_install:
+
+Docker Environment
+===================
+
+PolyglotDB is also available to run in a Docker container. This approach can be particularly useful for maintaining a consistent environment, isolating dependencies, and simplifying the setup process.
+
+Starting the Docker Container
+------------------------------
+
+To begin, you need to have Docker installed on your device. You can check if Docker is installed and verify its version by running:
+
+.. code:: bash
+
+   docker version
+
+Ensure that your Docker Engine version is **19.03.0** or higher.
+
+Follow these steps to start the Docker containers:
+
+1. Clone or download the Git repository:
+
+   .. code:: bash
+
+      git clone https://github.com/MontrealCorpusTools/polyglotdb-docker.git
+
+2. Navigate to the directory via the command line and run the container:
+
+   .. code:: bash
+
+      docker-compose run polyglotdb
+
+   If you are on a Mac, you might need to use:
+
+   .. code:: bash
+
+      docker compose run polyglotdb
+
+   This command will open an interactive shell inside the `polyglotdb` container, where you can execute your PolyglotDB scripts.
+
+3. The default folder structure is as follows. Ensure your Python scripts and data are placed within the `polyglotdb-docker` directory, which is mounted to the Docker container for execution:
+
+   .. code-block:: text
+
+      polyglotdb-docker (your default working directory, mounted to /polyglotdb inside the Docker container)
+      ├── pgdb
+      │   ├── neo4j
+      │   │   ├── conf
+      │   │   │   └── neo4j.conf
+      │   │   ├── data
+      │   │   │   └── *
+      │   │   └── logs
+      │   │       └── *
+      │   ├── influxdb
+      │   │   ├── conf
+      │   │   │   └── influxdb.conf
+      │   │   ├── data
+      │   │   │   └── *
+      │   │   └── meta
+      │   │       └── *
+
+4. To stop the Docker containers, first exit the `polyglotdb` shell by running:
+
+   .. code:: bash
+
+      exit
+
+   Then, shut down the other containers with:
+
+   .. code:: bash
+
+      docker compose down
+
+Changing the Default Storage Location
+-------------------------------------
+
+You can modify the default folder structure by editing the `docker-compose.yml` file. To change the storage location for Neo4j and InfluxDB data:
+
+1. Move the `neo4j` and `influxdb` folders from the `polyglotdb-docker/pgdb` directory to your desired location.
+
+2. Update the volume paths in the `docker-compose.yml` file to reflect the new location. For example:
+
+   .. code-block:: yaml
+
+      neo4j:
+         ...
+         volumes:
+            - /path/to/your/neo4j/conf:/conf
+            - /path/to/your/neo4j/data:/data
+            - /path/to/your/neo4j/logs:/logs
+            - shared_data:/temp
+         ...
+
+      influxdb:
+         ...
+         volumes:
+            - /path/to/your/influxdb:/var/lib/influxdb
+            - /path/to/your/influxdb/conf/influxdb.conf:/etc/influxdb/influxdb.conf
+            - shared_data:/temp
+         ...
+
+You can also change the working directory by modifying the `docker-compose.yml` file. For instance:
+
+.. code-block:: yaml
+
+   polyglotdb:
+      ...
+      volumes:
+         - shared_data:/temp
+         - /path/to/your/working/directory:/polyglotdb
+
+By doing this, the specified directory on your device will be mounted to the Docker container under `/polyglotdb`. To access PolyglotDB scripts and data within the container, ensure they are placed inside your chosen directory.
