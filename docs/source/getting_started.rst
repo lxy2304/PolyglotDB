@@ -115,7 +115,7 @@ To return to your root environment:
 .. _start_local_databases:
 
 Steps to use PolyglotDB
-=======================
+-----------------------
 
 Now that you have set up the PolyglotDB environment and installed local databases, 
 follow these steps each time you use PolyglotDB:
