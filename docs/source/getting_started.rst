@@ -4,6 +4,10 @@
 
 .. _Conda Installation: https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html
 
+.. _reaper: https://github.com/google/REAPER
+
+.. _praat: https://www.fon.hum.uva.nl/praat/
+
 ***************
 Getting started
 ***************
@@ -35,9 +39,9 @@ If you don't have conda installed on your device:
 #. Make sure your conda is up to date :code:`conda update conda`
 
 .. warning::
-   
-On Windows, you must use the Anaconda Prompt or Miniforge Prompt to effectively manage and execute conda commands. 
-This is crucial to avoid potential issues specific to the Windows environment and to ensure that all functionalities work as intended.
+
+   On Windows, you must use the Anaconda Prompt or Miniforge Prompt to effectively manage and execute conda commands. 
+   This is crucial to avoid potential issues specific to the Windows environment and to ensure that all functionalities work as intended.
 
 To install via pip:
 
@@ -108,48 +112,75 @@ To return to your root environment:
 
     conda deactivate
 
+.. _start_local_databases:
+
+Steps to use PolyglotDB
+=======================
+
+Now that you have set up the PolyglotDB environment and installed local databases, 
+follow these steps each time you use PolyglotDB:
+
+#. Navigate to your working directory, either in your IDE or via the command line. (On Windows, use Anaconda Prompt/Miniforge Prompt.)
+#. Activate the conda environment: :code:`conda activate polyglotdb`.
+#. Start the local databases: :code:`pgdb start`.
+#. Write your Python scripts inside this working directory.
+#. Run the scripts using: :code:`python your_script.py`.
+#. When finished, stop the local databases: :code:`pgdb stop`.
+#. Deactivate the conda environment: :code:`conda deactivate`.
 
 .. _docker_install:
 
 Docker Environment
 ===================
 
-PolyglotDB is also available to run in a Docker container. This approach can be particularly useful for maintaining a consistent environment, isolating dependencies, and simplifying the setup process.
+Running PolyglotDB in a Docker container is a great way to maintain a consistent environment, isolate dependencies, and streamline your setup process. This section will guide you through setting up and using PolyglotDB within Docker.
 
-Starting the Docker Container
-------------------------------
+Prerequisites
+-------------
 
-To begin, you need to have Docker installed on your device. You can check if Docker is installed and verify its version by running:
+Before starting, ensure that Docker is installed on your system. You can check if Docker is installed and verify its version by running the following command in your terminal:
 
 .. code:: bash
 
    docker version
 
-Ensure that your Docker Engine version is **19.03.0** or higher.
+Make sure your Docker Engine version is **19.03.0** or higher.
 
-Follow these steps to start the Docker containers:
+Setting Up the Docker Container
+-------------------------------
 
-1. Clone or download the Git repository:
+Follow these steps to get your Docker container up and running:
+
+1. **Clone the Repository:**
+
+   First, clone the PolyglotDB Docker repository to your local machine:
 
    .. code:: bash
 
       git clone https://github.com/MontrealCorpusTools/polyglotdb-docker.git
 
-2. Navigate to the directory via the command line and run the container:
+2. **Start the Docker Container:**
+
+   Navigate to the directory you just cloned and start the container:
 
    .. code:: bash
 
       docker-compose run polyglotdb
 
-   If you are on a Mac, you might need to use:
+   .. note::
 
-   .. code:: bash
+      **Note for Mac Users:**  
+      If you’re using a Mac, you might need to run:
 
-      docker compose run polyglotdb
+      .. code:: bash
 
-   This command will open an interactive shell inside the `polyglotdb` container, where you can execute your PolyglotDB scripts.
+         docker compose run polyglotdb
 
-3. The default folder structure is as follows. Ensure your Python scripts and data are placed within the `polyglotdb-docker` directory, which is mounted to the Docker container for execution:
+   This command launches an interactive shell inside the `polyglotdb` container, allowing you to execute PolyglotDB scripts directly.
+
+3. **Working with the Default Folder Structure:**
+
+   Your default folder structure is as follows. Ensure your Python scripts and data are placed within the `polyglotdb-docker` directory, which is mounted to the Docker container for execution:
 
    .. code-block:: text
 
@@ -169,8 +200,11 @@ Follow these steps to start the Docker containers:
       │   │   │   └── *
       │   │   └── meta
       │   │       └── *
+      ├── your scripts and data should go here
 
-4. To stop the Docker containers, first exit the `polyglotdb` shell by running:
+4. **Stopping the Docker Containers:**
+
+   To stop the Docker containers, first exit the `polyglotdb` shell by running:
 
    .. code:: bash
 
@@ -221,3 +255,11 @@ You can also change the working directory by modifying the `docker-compose.yml` 
          - /path/to/your/working/directory:/polyglotdb
 
 By doing this, the specified directory on your device will be mounted to the Docker container under `/polyglotdb`. To access PolyglotDB scripts and data within the container, ensure they are placed inside your chosen directory.
+
+Pre-installed Tools
+-------------------
+
+The Docker setup comes with several pre-installed tools inside the `polyglotdb` container located at `/pgdb/tools`:
+
+1. `praat`_: Installed at `/pgdb/tools/praat`, environment variable `praat`. In your script, you can reference it by :code:`os.environ.get('praat')`.
+2. `reaper`_: Installed at `/pgdb/tools/reaper`, environment variable `reaper`. In your script, you can reference it by :code:`os.environ.get('reaper')`.
