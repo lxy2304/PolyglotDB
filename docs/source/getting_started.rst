@@ -4,10 +4,11 @@
 
 .. _Conda Installation: https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html
 
-.. _reaper: https://github.com/google/REAPER
+.. _Reaper: https://github.com/google/REAPER
 
-.. _praat: https://www.fon.hum.uva.nl/praat/
+.. _Praat: https://www.fon.hum.uva.nl/praat/
 
+.. _Docker: https://docs.docker.com/get-started/get-docker/
 ***************
 Getting started
 ***************
@@ -133,7 +134,7 @@ follow these steps each time you use PolyglotDB:
 Docker Environment
 ===================
 
-Running PolyglotDB in a Docker container is a great way to maintain a consistent environment, isolate dependencies, and streamline your setup process. This section will guide you through setting up and using PolyglotDB within Docker.
+Running PolyglotDB in a `Docker`_ container is a great way to maintain a consistent environment, isolate dependencies, and streamline your setup process. This section will guide you through setting up and using PolyglotDB within Docker.
 
 Prerequisites
 -------------
@@ -153,28 +154,16 @@ Follow these steps to get your Docker container up and running:
 
 1. **Clone the Repository:**
 
-   First, clone the PolyglotDB Docker repository to your local machine:
-
-   .. code:: bash
-
-      git clone https://github.com/MontrealCorpusTools/polyglotdb-docker.git
+   First, clone the PolyglotDB Docker repository to your local machine: :code:`git clone https://github.com/MontrealCorpusTools/polyglotdb-docker.git`.
 
 2. **Start the Docker Container:**
 
-   Navigate to the directory you just cloned and start the container:
-
-   .. code:: bash
-
-      docker-compose run polyglotdb
+   Navigate to the directory you just cloned and start the container: :code:`docker-compose run polyglotdb`.
 
    .. note::
 
       **Note for Mac Users:**  
-      If you’re using a Mac, you might need to run:
-
-      .. code:: bash
-
-         docker compose run polyglotdb
+      If you're using a Mac, you might need to run :code:`docker compose run polyglotdb`
 
    This command launches an interactive shell inside the `polyglotdb` container, allowing you to execute PolyglotDB scripts directly.
 
@@ -261,5 +250,5 @@ Pre-installed Tools
 
 The Docker setup comes with several pre-installed tools inside the `polyglotdb` container located at `/pgdb/tools`:
 
-1. `praat`_: Installed at `/pgdb/tools/praat`, environment variable `praat`. In your script, you can reference it by :code:`os.environ.get('praat')`.
-2. `reaper`_: Installed at `/pgdb/tools/reaper`, environment variable `reaper`. In your script, you can reference it by :code:`os.environ.get('reaper')`.
+1. `Praat`_: Installed at `/pgdb/tools/praat`, environment variable `praat`. In your script, you can reference it by :code:`os.environ.get('praat')`.
+2. `Reaper`_: Installed at `/pgdb/tools/reaper`, environment variable `reaper`. In your script, you can reference it by :code:`os.environ.get('reaper')`.
