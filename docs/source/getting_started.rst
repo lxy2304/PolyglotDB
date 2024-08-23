@@ -191,7 +191,26 @@ Follow these steps to get your Docker container up and running:
       │   │       └── *
       ├── your scripts and data should go here
 
-4. **Stopping the Docker Containers:**
+4. **Editing and Running Your PolyglotDB Scripts**
+
+   You can choose to edit your scripts either using an IDE outside of the Docker container or by using command-line text editors within the Docker container. Two text editors, ``nano`` and ``vim``, are pre-installed for use inside the container.
+
+   - **Using an IDE Outside the Docker Container**:
+     
+     - If you prefer to use an IDE outside the Docker container, 
+     ensure that you save your scripts inside your working directory (default: ``polyglotdb-docker``). 
+     You can customize this directory by following the instructions in the later section `Changing the Default Storage Location`_.
+     - The scripts stored in this directory will be automatically available inside the Docker container 
+     under the ``/polyglotdb`` directory. You can then execute your scripts using the command: :code:`python your_script.py`.
+  
+   - **Using Command-Line Text Editors Inside the Docker Container**:
+     
+     - If you choose to write your scripts inside the Docker container using command-line tools, 
+     you can place them anywhere within the container and execute them using the command: :code:`python your_script.py`.
+     However, if you want to preserve your scripts after shutting down the container, 
+     ensure you save them in the directory mounted to your device (default: ``/polyglotdb``).
+
+5. **Stopping the Docker Containers:**
 
    To stop the Docker containers, first exit the `polyglotdb` shell by running:
 
@@ -205,6 +224,7 @@ Follow these steps to get your Docker container up and running:
 
       docker compose down
 
+.. _Changing the Default Storage Location:
 Changing the Default Storage Location
 -------------------------------------
 
