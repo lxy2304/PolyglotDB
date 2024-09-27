@@ -15,3 +15,4 @@ dependencies:
     - neo4j-python-driver
     - pip:
         - conch-sounds
+	- polyglotdb
