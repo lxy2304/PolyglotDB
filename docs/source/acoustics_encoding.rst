@@ -231,38 +231,133 @@ a `window_max` of 30 means that it will look up to 30 milliseconds after the end
 Encoding other measures using a Praat script
 ============================================
 
-Other acoustic measures can be encoded by passing a Praat script to :code:`analyze_script`.
+You can encode additional acoustic measures by passing a Praat script to either 
+:code:`analyze_script` or :code:`analyze_track_script`. It is essential to follow the exact input and output format for 
+  your Praat script to ensure compatibility with the system.
 
-The requirements for the Praat script are:
+- **:code:`analyze_script`:** Designed for single-point measurements. This function works for user-specific 
+  measurements that occur at exactly one point in time for any target annotation type 
+  (or a defined subset of that type) in the hierarchy, such as a predefined set of vowels within all phones.
 
-* exactly one input: the full path to the sound file containing (only) the phone. (Any other parameters can be set manually
-  within your script, and an existing script may need some other modifications in order to work on this type of input)
-* print the resulting acoustic measurements (or other properties) to the Praat Info window in the following format:
+- **:code:`analyze_track_script`:** Use this for continuous measurements or when measurements are required 
+  at multiple time points per annotation. This function allows you to configure your Praat script to 
+  output results for multiple time points. 
 
-  * The first line should be a space-separated list of column names. These are the names of the properties that will be
-    saved into the database.
-  * The second line should be a space-separated list containing one measurement for each property.
-  * (It is okay if there is some blank space before/after these two lines.)
+analyze_script
+--------------
+
+There are two input formats available for designing your Praat script:
+
+**Format 1:** 
+- This is sufficient for most use cases and should be your default choice unless runtime efficiency is critical. 
+- In this format, the system generates temporary sound files, each containing one instance of your chosen 
+  annotation type. 
+
+**Format 2 (Optimized Analysis):** 
+- This format is more efficient as it reuses the same discourse sound file for all annotations in the same discourse, 
+  avoiding the creation of extra files.
+
+Format 1:
+
+**Input Requirements:**
+- One required input: the full path to the sound file. This input will be automatically filled by the system. 
+  You can define additional attributes as needed.
+
+Example input section for a Praat script using Format 1::
+
+    form Variables
+        sentence filename
+        # add more arguments here 
+    endform
+
+    Read from file... 'filename$'
+
+Format 2 (for optimized analysis):
+
+**Input Requirements:**
+- Five required inputs:
+  1. Full path to the **long** sound file
+  2. `begin` time
+  3. `end` time
+  4. `channel`
+  5. `padding`
+
+Do not assign values to these five fields; the system will populate them during processing. You may include additional 
+attributes beyond these five, but ensure that values are passed as an array via the API.
+
+Example Praat script for Format 2::
+
+    form Variables
+        sentence filename 
+        real begin 
+        real end
+        integer channel
+        real padding
+        # add more arguments here
+    endform
+
+    Open long sound file... 'filename$'
+
+    seg_begin = begin - padding
+    if seg_begin < 0
+        seg_begin = 0
+    endif
+
+    seg_end = end + padding
+    if seg_end > duration
+        seg_end = duration
+    endif
+
+    Extract part... seg_begin seg_end 1
+    channel = channel + 1
+    Extract one channel... channel
+
+**Key Notes:**
+- Always use :code:`Open long sound file` to ensure compatibility with the system.
+- The `padding` field allows flexibility by extending the actual start and end times of the segment (default is 0.1s).
+- Channel indexing starts at 0 in the system, so increment by 1 for use in Praat (Praat uses 1-based indexing).
+
+**Output Requirements:**
+- Print results to the Praat Info window in this format:
+  - The first line contains space-separated column names (property names to be saved in the database).
+  - The second line contains space-separated measurements for each property.
 
   An example of the Praat output::
 
     peak slope cog spread
     5540.7376 24.3507 6744.0670 1562.1936
 
-  Output format if you are only taking one measure::
+Output format if you are only taking one measure::
 
     cog
     6013.9
 
-To run :code:`analyze_script`, do the following: 
+To run :code:`analyze_script`, follow these steps:
+1. Encode a phone class for the subset of phones you want to analyze.
+2. Call :code:`analyze_script` with the phone class and the path to your script.
 
-1. encode a phone class for the subset of phones you would like to analyze
-2. call :code:`analyze_script` on that phone class, with the path to your script
-
-For example, to run a script which takes measures for sibilants:
-
-.. code-block:: python
+Example usage::
 
     with CorpusContext(config) as c:
-        c.encode_class(['S', 'Z', 'SH', 'ZH'], 'sibilant')
+        c.encode_type_subset('phone', ['S', 'Z', 'SH', 'ZH'], 'sibilant')
         c.analyze_script('sibilant', 'path/to/script/sibilant.praat')
+
+
+analyze_track_script
+--------------------
+
+This function shares the same input formats and functionality as :code:`analyze_script`. However, 
+:code:`analyze_track_script` is specifically designed for continuous measurements and can only 
+be performed on phones or subsets of phones.
+
+**Output Requirements:**
+- Print results to the Praat Info window in the following format:
+  - The first line begins with time, followed by space-separated column names.
+  - Subsequent lines contain timestamps and measurements for each property.
+
+Example output::
+
+    time    f1  f2  f3  f4
+    0.000   502 1497    2502    3498
+    0.050   518 1483    2475    3452
+    0.100   537 1471    2462    3441
