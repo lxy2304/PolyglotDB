@@ -233,13 +233,13 @@ Encoding other measures using a Praat script
 
 You can encode additional acoustic measures by passing a Praat script to either 
 :code:`analyze_script` or :code:`analyze_track_script`. It is essential to follow the exact input and output format for 
-  your Praat script to ensure compatibility with the system.
+your Praat script to ensure compatibility with the system.
 
-- **:code:`analyze_script`:** Designed for single-point measurements. This function works for user-specific 
+- :code:`analyze_script`: Designed for single-point measurements. This function works for user-specific 
   measurements that occur at exactly one point in time for any target annotation type 
   (or a defined subset of that type) in the hierarchy, such as a predefined set of vowels within all phones.
 
-- **:code:`analyze_track_script`:** Use this for continuous measurements or when measurements are required 
+- :code:`analyze_track_script`: Use this for continuous measurements or when measurements are required 
   at multiple time points per annotation. This function allows you to configure your Praat script to 
   output results for multiple time points. 
 
@@ -248,20 +248,13 @@ analyze_script
 
 There are two input formats available for designing your Praat script:
 
-**Format 1:** 
-- This is sufficient for most use cases and should be your default choice unless runtime efficiency is critical. 
-- In this format, the system generates temporary sound files, each containing one instance of your chosen 
-  annotation type. 
-
-**Format 2 (Optimized Analysis):** 
-- This format is more efficient as it reuses the same discourse sound file for all annotations in the same discourse, 
-  avoiding the creation of extra files.
-
 Format 1:
+~~~~~~~~~
+This is sufficient for most use cases and should be your default choice unless runtime efficiency is critical. 
+In this format, the system generates temporary sound files, each containing one instance of your chosen annotation type. 
 
 **Input Requirements:**
-- One required input: the full path to the sound file. This input will be automatically filled by the system. 
-  You can define additional attributes as needed.
+* One required input: the full path to the sound file. This input will be automatically filled by the system. You can define additional attributes as needed.
 
 Example input section for a Praat script using Format 1::
 
@@ -273,9 +266,11 @@ Example input section for a Praat script using Format 1::
     Read from file... 'filename$'
 
 Format 2 (for optimized analysis):
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This format is more efficient as it reuses the same discourse sound file for all annotations in the same discourse, avoiding the creation of extra files.
 
 **Input Requirements:**
-- Five required inputs:
+* Five required inputs:
   1. Full path to the **long** sound file
   2. `begin` time
   3. `end` time
@@ -313,14 +308,14 @@ Example Praat script for Format 2::
     Extract one channel... channel
 
 **Key Notes:**
-- Always use :code:`Open long sound file` to ensure compatibility with the system.
-- The `padding` field allows flexibility by extending the actual start and end times of the segment (default is 0.1s).
-- Channel indexing starts at 0 in the system, so increment by 1 for use in Praat (Praat uses 1-based indexing).
+* Always use :code:`Open long sound file` to ensure compatibility with the system.
+* The `padding` field allows flexibility by extending the actual start and end times of the segment (default is 0.1s).
+* Channel indexing starts at 0 in the system, so increment by 1 for use in Praat (Praat uses 1-based indexing).
 
 **Output Requirements:**
-- Print results to the Praat Info window in this format:
-  - The first line contains space-separated column names (property names to be saved in the database).
-  - The second line contains space-separated measurements for each property.
+* Print results to the Praat Info window in this format:
+  * The first line contains space-separated column names (property names to be saved in the database).
+  * The second line contains space-separated measurements for each property.
 
   An example of the Praat output::
 
@@ -351,9 +346,9 @@ This function shares the same input formats and functionality as :code:`analyze_
 be performed on phones or subsets of phones.
 
 **Output Requirements:**
-- Print results to the Praat Info window in the following format:
-  - The first line begins with time, followed by space-separated column names.
-  - Subsequent lines contain timestamps and measurements for each property.
+* Print results to the Praat Info window in the following format:
+  * The first line begins with time, followed by space-separated column names.
+  * Subsequent lines contain timestamps and measurements for each property.
 
 Example output::
 
