@@ -254,7 +254,8 @@ This is sufficient for most use cases and should be your default choice unless r
 In this format, the system generates temporary sound files, each containing one instance of your chosen annotation type. 
 
 **Input Requirements:**
-* One required input: the full path to the sound file. This input will be automatically filled by the system. You can define additional attributes as needed.
+
+- One required input: the full path to the sound file. This input will be automatically filled by the system. You can define additional attributes as needed.
 
 Example input section for a Praat script using Format 1::
 
@@ -270,12 +271,13 @@ Format 2 (for optimized analysis):
 This format is more efficient as it reuses the same discourse sound file for all annotations in the same discourse, avoiding the creation of extra files.
 
 **Input Requirements:**
-* Five required inputs:
-  1. Full path to the **long** sound file
-  2. `begin` time
-  3. `end` time
-  4. `channel`
-  5. `padding`
+
+- Five required inputs: 
+    - Full path to the **long** sound file
+    - `begin` time
+    - `end` time
+    - `channel`
+    - `padding`
 
 Do not assign values to these five fields; the system will populate them during processing. You may include additional 
 attributes beyond these five, but ensure that values are passed as an array via the API.
@@ -308,16 +310,18 @@ Example Praat script for Format 2::
     Extract one channel... channel
 
 **Key Notes:**
-* Always use :code:`Open long sound file` to ensure compatibility with the system.
-* The `padding` field allows flexibility by extending the actual start and end times of the segment (default is 0.1s).
-* Channel indexing starts at 0 in the system, so increment by 1 for use in Praat (Praat uses 1-based indexing).
+
+- Always use :code:`Open long sound file` to ensure compatibility with the system.
+- The `padding` field allows flexibility by extending the actual start and end times of the segment (default is 0.1s).
+- Channel indexing starts at 0 in the system, so increment by 1 for use in Praat (Praat uses 1-based indexing).
 
 **Output Requirements:**
-* Print results to the Praat Info window in this format:
-  * The first line contains space-separated column names (property names to be saved in the database).
-  * The second line contains space-separated measurements for each property.
 
-  An example of the Praat output::
+- Print results to the Praat Info window in this format:
+    - The first line contains space-separated column names (property names to be saved in the database).
+    - The second line contains space-separated measurements for each property.
+
+An example of the Praat output::
 
     peak slope cog spread
     5540.7376 24.3507 6744.0670 1562.1936
@@ -328,8 +332,9 @@ Output format if you are only taking one measure::
     6013.9
 
 To run :code:`analyze_script`, follow these steps:
-1. Encode a phone class for the subset of phones you want to analyze.
-2. Call :code:`analyze_script` with the phone class and the path to your script.
+
+    1. Encode a phone class for the subset of phones you want to analyze.
+    2. Call :code:`analyze_script` with the phone class and the path to your script.
 
 Example usage::
 
@@ -346,9 +351,10 @@ This function shares the same input formats and functionality as :code:`analyze_
 be performed on phones or subsets of phones.
 
 **Output Requirements:**
-* Print results to the Praat Info window in the following format:
-  * The first line begins with time, followed by space-separated column names.
-  * Subsequent lines contain timestamps and measurements for each property.
+
+- Print results to the Praat Info window in the following format:
+  - The first line begins with time, followed by space-separated column names.
+  - Subsequent lines contain timestamps and measurements for each property.
 
 Example output::
 
