@@ -3,6 +3,8 @@ import logging
 import time
 import neo4j
 import re
+import numpy as np
+import csv 
 
 def make_path_safe(path):
     '''Takes a path and returns it with the associated Javascript URL-safe characters'''
@@ -149,7 +151,7 @@ def import_csvs(corpus_context, speakers, token_headers, hierarchy, call_back=No
                 else:
                     rel_path = 'file:///{}'.format(make_path_safe(path))
                 try:
-                    session.write_transaction(_unique_function, at)
+                    session.execute_write(_unique_function, at)
                 except neo4j.exceptions.ClientError as e:
                     if e.code != 'Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists':
                         raise
@@ -161,14 +163,14 @@ def import_csvs(corpus_context, speakers, token_headers, hierarchy, call_back=No
                         continue
                     properties.append(prop_temp.format(name=x))
                     try:
-                        session.write_transaction(_prop_index, at, x)
+                        session.execute_write(_prop_index, at, x)
                     except neo4j.exceptions.ClientError as e:
                         if e.code != 'Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists':
                             raise
                 if 'label' in token_headers[at]:
                     properties.append('label_insensitive: toLower(csvLine.label)')
                     try:
-                        session.write_transaction(_label_index, at)
+                        session.execute_write(_label_index, at)
                     except neo4j.exceptions.ClientError as e:
                         if e.code != 'Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists':
                             raise
@@ -233,12 +235,12 @@ def import_csvs(corpus_context, speakers, token_headers, hierarchy, call_back=No
                 speaker_statements.append((node_statement, rel_statement, path, at, s))
                 begin = time.time()
                 try:
-                    session.write_transaction(_begin_index, at)
+                    session.execute_write(_begin_index, at)
                 except neo4j.exceptions.ClientError as e:
                     if e.code != 'Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists':
                         raise
                 try:
-                    session.write_transaction(_end_index, at)
+                    session.execute_write(_end_index, at)
                 except neo4j.exceptions.ClientError as e:
                     if e.code != 'Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists':
                         raise
@@ -1312,3 +1314,116 @@ def import_token_csv(corpus_context, path, annotated_type, id_column, properties
                        id_column=id_column, property_update=property_update)
     corpus_context.execute_cypher(statement)
     os.remove(path)
+
+
+def infer_csv_types(path, sample_size=10):
+    """
+    Reads a sample of the CSV file and infers column types (integer, float, boolean, string only)
+    """
+    type_map = {}
+    
+    with open(path, newline='', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        sample_rows = []
+        
+        for _ in range(sample_size):
+            try:
+                sample_rows.append(next(reader))
+            except StopIteration:
+                break  # Stop if there are fewer rows than sample_size
+        
+        if not sample_rows:
+            return {}  # Return empty type map if no data exists
+    
+    column_data = {key: [] for key in sample_rows[0].keys()}
+    
+    for row in sample_rows:
+        for key, value in row.items():
+            column_data[key].append(value.strip())
+    
+    for key, values in column_data.items():
+        np_values = np.array(values, dtype=str)
+        
+        if np.all(np.char.lower(np_values) == 'true') or np.all(np.char.lower(np_values) == 'false'):
+            inferred_type = "bool"
+        elif np.all(np.char.isnumeric(np_values)):
+            inferred_type = "int"
+        else:
+            try:
+                np.array(np_values, dtype=float)
+                inferred_type = "float"
+            except ValueError:
+                inferred_type = "string"
+        
+        type_map[key] = inferred_type
+    
+    
+    return type_map    
+
+def import_csv_with_timestamp(corpus_context, path, annotated_type, timestamp_column, discourse_column, properties=None):
+    """
+    Adds new properties to a list of tokens of a given type based on timestamp and discourse matching.
+
+    Parameters
+    ----------
+    corpus_context: :class:`~polyglotdb.corpus.AnnotatedContext`
+        The corpus to load into.
+    path : str
+        The file name of the CSV.
+    annotated_type : str
+        The type of the tokens that are being updated.
+    timestamp_column : str
+        The header name for the column containing timestamps.
+    discourse_column : str
+        The header name for the column containing discourse names.
+    properties : list
+        A list of column names to update; if None, assume all columns will be updated (default).
+    """
+    if properties is None:
+        with open(path, 'r') as f:
+            properties = [x.strip() for x in f.readline().split(',') if x.strip() not in [timestamp_column, discourse_column]]
+    
+    if not annotated_type in corpus_context.hierarchy.annotation_types:
+        raise KeyError("Annotation type {} does not exist in this corpus".format(annotated_type))
+
+    props_to_add = []
+    for p in properties:
+        if not corpus_context.hierarchy.has_token_property(annotated_type, p):
+            props_to_add.append((p, str))
+
+    if props_to_add:
+        corpus_context.hierarchy.add_token_properties(corpus_context, annotated_type, props_to_add)
+        corpus_context.encode_hierarchy()
+
+    type_map = infer_csv_types(path,30)
+
+    type_functions = {
+        "int": "toInteger",
+        "float": "toFloat",
+        "bool": "toBoolean",
+        "date": "date",
+        "datetime": "datetime",
+        "string": "" 
+    }
+
+    property_update = ', '.join([
+        "x.{p} = {func}(csvLine.{p})".format(
+            p=p, func=type_functions.get(type_map.get(p, "string"), "")
+        ) if type_map.get(p, "string") != "string" else "x.{p} = csvLine.{p}".format(p=p)
+        for p in properties
+    ])
+
+    statement = '''
+    CALL {{
+        LOAD CSV WITH HEADERS FROM "file://{path}" AS csvLine
+        MATCH (d:Discourse {{name: csvLine.{discourse_column}}})
+        MATCH (x:{a_type}:{corpus})-[:spoken_in]->(d)
+        WHERE x.begin <= toFloat(csvLine.{timestamp_column}) <= x.end
+        SET {property_update}
+    }} IN TRANSACTIONS OF 500 ROWS
+    '''.format(
+        path=path, a_type=annotated_type, corpus=corpus_context.cypher_safe_name,
+        timestamp_column=timestamp_column, discourse_column=discourse_column, property_update=property_update
+    )
+
+    corpus_context.execute_cypher(statement)

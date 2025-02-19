@@ -333,28 +333,30 @@ Output format if you are only taking one measure::
 
 To run :code:`analyze_script`, follow these steps:
 
-    1. Encode a phone class for the subset of phones you want to analyze.
-    2. Call :code:`analyze_script` with the phone class and the path to your script.
+    1. (Optional) Encode a subset for the annotation type you want to analyze.
+    2. Call :code:`analyze_script` with the annotation type, the subset name and the path to your script.
 
-Example usage::
+.. code-block:: python
 
     with CorpusContext(config) as c:
         c.encode_type_subset('phone', ['S', 'Z', 'SH', 'ZH'], 'sibilant')
-        c.analyze_script('sibilant', 'path/to/script/sibilant.praat')
+        c.analyze_script(subset='sibilant', annotation_type="phone", script_path='path/to/script/sibilant.praat')
 
 
 analyze_track_script
 --------------------
 
 This function shares the same input formats and functionality as :code:`analyze_script`. However, 
-:code:`analyze_track_script` is specifically designed for continuous measurements and can only 
-be performed on phones or subsets of phones.
+:code:`analyze_track_script` is specifically designed for continuous measurements.
+Before using this functionality, you must add utterance encoding. When calling the API, you will 
+need to specify an annotation type (e.g., phone, syllable, or word) to perform the analysis. 
+The script will then run separately for each instance of the selected annotation type in a multiprocessing manner.
 
 **Output Requirements:**
 
 - Print results to the Praat Info window in the following format:
-  - The first line begins with time, followed by space-separated column names.
-  - Subsequent lines contain timestamps and measurements for each property.
+    - The first line begins with time, followed by space-separated column names.
+    - Subsequent lines contain timestamps and measurements for each property.
 
 Example output::
 
@@ -362,3 +364,34 @@ Example output::
     0.000   502 1497    2502    3498
     0.050   518 1483    2475    3452
     0.100   537 1471    2462    3441
+
+.. code-block:: python
+
+    with CorpusContext(config) as c:
+        script_path = 'voice_quality.praat'
+        c.config.praat_path = '/path/to/your/praat/executable'
+        props = [('H1_H2', float), ('H1_A1',float), ('H1_A2',float), ('H1_A3',float)]
+        c.analyze_track_script('voice_quality', props, script_path, annotation_type='phone')
+
+
+Encoding acoustic track statistics
+==================================
+
+After encoding an acoustic track measurement—either through the built-in algorithms or custom Praat scripts—
+you can perform statistical aggregation on these data tracks. The supported statistical measures are: mean, median, 
+standard deviation (stddev), sum, mode, and count. 
+Aggregation can be performed on a specified annotation type, such as phones, words, or syllables 
+(if syllable encoding is available). The aggregation is conducted for all annotations with the same label.
+Aggregation can be performed by speaker, in which case the results will be grouped by speaker, 
+and each (annotation_label, speaker) pair will have its corresponding statistical measure computed.
+Once encoded, the computed statistics are stored and can be queried later.
+
+.. code-block:: python
+
+    with CorpusContext(config) as c:        
+        # Encode a statistic for an acoustic measure
+        c.encode_acoustic_statistic('formants', 'mean', by_annotation='phone', by_speaker=True)
+        
+        # Alternatively, call the get function directly; it will encode the statistic if not already available
+        results = c.get_acoustic_statistic('formants', 'mean', by_annotation='phone', by_speaker=True)
+
