@@ -65,6 +65,7 @@ Pathway to installation
 -----------------------
 
 There are four steps to install PolyglotDB: 
+
 #. :ref:`Quick Installation<quick_install>` via ``conda-forge``
 #. :ref:`Installation from source with pip<pip_install>`
 #. :ref:`Configure Your IDE<configure_IDE>` (Optional) 
