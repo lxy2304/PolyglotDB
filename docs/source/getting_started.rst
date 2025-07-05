@@ -65,12 +65,14 @@ Pathway to installation
 -----------------------
 
 There are four steps to install PolyglotDB: 
-1. Quick Installation via ``conda-forge``
-2. Installation from source with ``pip`` 
-3. Configure Your IDE (Optional) 
-4. Setting up a local database
+#. :ref:`Quick Installation<quick_install>` via ``conda-forge``
+#. :ref:`Installation from source with pip<pip_install>`
+#. :ref:`Configure Your IDE<configure_IDE>` (Optional) 
+#. :ref:`Setting up a local database<local_setup>`
 
 You must complete either Step 1 or Step 2, and Step 4 to use PolyglotDB.
+
+.. _quick_install: 
 
 Quick Installation via conda-forge (Recommended)
 ------------------------------------------------
@@ -78,6 +80,8 @@ Quick Installation via conda-forge (Recommended)
 #. You can install PolyglotDB using a single Conda command :code:`conda create -n polyglotdb -c conda-forge polyglotdb python=3.12`
 #. Activate conda environment :code:`conda activate polyglotdb`
 #. You then have the ``pgdb`` utility that can be run inside your conda environment and manages a local database.
+
+.. _pip_install:
 
 To install from source (primarily for development)
 -------------------------------------------------
@@ -90,6 +94,8 @@ To install from source (primarily for development)
 #. Activate conda environment :code:`conda activate polyglotdb-dev`
 #. Install PolyglotDB via :code:`pip install -e .`, which will install the ``pgdb`` utility that can be run inside your conda environment
    and manages a local database.
+
+.. _configure_IDE: 
 
 Configure Your IDE (Optional)
 -----------------------------
